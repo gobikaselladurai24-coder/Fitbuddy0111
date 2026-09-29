@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Workout Plan – FitBuddy</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body data-plan-id="{{ plan_id or '' }}">
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">FitBuddy</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/form" class="nav-link">Create Plan</a>
+        <a href="/dashboard" class="nav-link active">Dashboard</a>
+        <a href="/docs" target="_blank" class="nav-link badge-link">API Docs</a>
+      </nav>
+      <div class="nav-action">
+        <a href="/form" class="btn btn-secondary btn-sm">+ New Plan</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-container">
+    <div class="dashboard-wrapper">
+      
+      <!-- Top Bar: Title & Actions -->
+      <div class="dash-top-bar">
+        <div>
+          <span class="badge-accent" id="plan-badge">7-Day Fitness Architecture</span>
+          <h1 class="dash-title" id="dash-heading">Your Personalized Workout Plan</h1>
+          <p class="dash-subtitle" id="dash-subheading">Created specifically for your physiological target & training intensity</p>
+        </div>
+        <div class="dash-action-buttons">
+          <button type="button" id="btn-print-plan" class="btn btn-outline btn-sm">
+            🖨️ Print Plan
+          </button>
+          <button type="button" id="btn-view-history" class="btn btn-outline btn-sm">
+            📜 Plan History (<span id="history-count">0</span>)
+          </button>
+          <a href="/form" class="btn btn-primary btn-sm">
+            + New Assessment
+          </a>
+        </div>
+      </div>
+
+      <!-- User Profile Summary Card (Section 13) -->
+      <div class="profile-card" id="user-profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar">🏋️</div>
+          <div>
+            <h2 class="profile-name" id="profile-name">Athlete</h2>
+            <p class="profile-meta" id="profile-meta">Loading athlete data...</p>
+          </div>
+        </div>
+        <div class="profile-stats-grid">
+          <div class="profile-stat-box">
+            <span class="pstat-label">Goal</span>
+            <span class="pstat-val" id="profile-goal">Muscle Gain</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="pstat-label">Intensity</span>
+            <span class="pstat-val" id="profile-intensity">Medium</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="pstat-label">Experience</span>
+            <span class="pstat-val" id="profile-experience">Beginner</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="pstat-label">Environment</span>
+            <span class="pstat-val" id="profile-pref">Home workout</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan Regeneration Banner if recently updated -->
+      <div id="updated-plan-banner" class="alert-box alert-success" style="display: none;">
+        ✨ <strong>Plan Successfully Updated!</strong> FitBuddy incorporated your feedback into the revised 7-day routine below.
+      </div>
+
+      <!-- Weekly 7-Day Plan Section (Section 13) -->
+      <div class="plan-section">
+        <div class="section-title-row">
+          <h2 class="section-heading">Weekly Schedule (Days 1 – 7)</h2>
+          <span class="schedule-pill">Evidence-Based Periodization</span>
+        </div>
+
+        <div id="days-container" class="days-grid">
+          <!-- Dynamically populated 7 days -->
+          <div class="loading-state-card">
+            <div class="spinner-circle"></div>
+            <p>Loading your 7-day training schedule...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nutrition & Recovery Section (Section 7) -->
+      <div class="nutrition-recovery-grid">
+        <div class="info-card nutrition-card">
+          <div class="info-card-header">
+            <span class="info-icon">🥗</span>
+            <div>
+              <h3 class="info-title">Nutrition Strategy</h3>
+              <p class="info-subtitle">Macronutrient & hydration protocol</p>
+            </div>
+          </div>
+          <div class="info-card-body">
+            <p id="nutrition-tip-text">Loading nutrition guidelines...</p>
+          </div>
+        </div>
+
+        <div class="info-card recovery-card">
+          <div class="info-card-header">
+            <span class="info-icon">💤</span>
+            <div>
+              <h3 class="info-title">Recovery & Sleep Protocol</h3>
+              <p class="info-subtitle">Muscular repair & stress regulation</p>
+            </div>
+          </div>
+          <div class="info-card-body">
+            <p id="recovery-tip-text">Loading recovery guidelines...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback & Improvement Section (Section 14) -->
+      <div class="feedback-card" id="feedback-section">
+        <div class="feedback-header">
+          <div class="feedback-badge">AI Plan Optimization</div>
+          <h2 class="feedback-title">Improve Your Plan</h2>
+          <p class="feedback-desc">
+            Want adjustments? Tell FitBuddy what you want to change (e.g. <em>"More cardio on Wednesday"</em>, <em>"More rest days"</em>, <em>"Focus more on legs"</em>, or <em>"Less intense shoulder exercises"</em>).
+          </p>
+        </div>
+
+        <div id="feedback-error-alert" class="alert-box alert-error" style="display: none;"></div>
+
+        <form id="feedback-form" class="feedback-form">
+          <div class="input-group">
+            <label for="feedback-input" class="input-label">Tell FitBuddy what you want to change...</label>
+            <textarea 
+              id="feedback-input" 
+              name="feedback_text" 
+              rows="3" 
+              class="textarea-field" 
+              placeholder="e.g. I need 2 full rest days and more core exercises, but keep workouts under 30 minutes."
+              required
+            ></textarea>
+          </div>
+
+          <div class="feedback-actions">
+            <button type="submit" id="btn-regenerate" class="btn btn-primary">
+              <span class="btn-text">🔄 Regenerate Plan</span>
+              <span class="btn-spinner" style="display: none;">
+                <span class="spinner-circle"></span> Optimizing with Gemini AI...
+              </span>
+            </button>
+            <div class="quick-tags">
+              <span>Quick tags:</span>
+              <button type="button" class="tag-btn" data-tag="Add 15 minutes of cardio after workouts">🏃 More Cardio</button>
+              <button type="button" class="tag-btn" data-tag="Add more rest days and gentler stretching">🛌 More Rest Days</button>
+              <button type="button" class="tag-btn" data-tag="Focus more on glutes and leg strength">🦵 Focus On Legs</button>
+              <button type="button" class="tag-btn" data-tag="Use only bodyweight exercises, no equipment">🏠 Bodyweight Only</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Medical Disclaimer -->
+      <div class="medical-disclaimer-card">
+        <div class="disclaimer-inner">
+          <span class="disclaimer-symbol">⚕️</span>
+          <div>
+            <strong>Medical Notice:</strong> AI-generated fitness information is general guidance and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a physician before starting any strenuous exercise program.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Plan History Modal -->
+  <div id="history-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Saved Workout Plans</h3>
+        <button type="button" id="btn-close-modal" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="history-modal-body">
+        <p>Loading history...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

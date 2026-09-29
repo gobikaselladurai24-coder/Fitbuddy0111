@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Plan – FitBuddy</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">FitBuddy</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/form" class="nav-link active">Create Plan</a>
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/docs" target="_blank" class="nav-link badge-link">API Docs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-container">
+    <div class="form-wrapper">
+      <div class="form-header">
+        <div class="header-badge">Step 1 of 2</div>
+        <h1 class="form-title">Personalized Fitness Assessment</h1>
+        <p class="form-desc">Provide your parameters below so FitBuddy's Gemini engine can architect your 7-day routine.</p>
+        
+        <!-- Demo quick fill button -->
+        <div class="demo-fill-box">
+          <span>Need a quick test?</span>
+          <button type="button" id="btn-load-demo" class="btn-demo-pill">
+            ⚡ Fill Demo Data (Kavin, 20yo, Muscle Gain)
+          </button>
+        </div>
+      </div>
+
+      <div id="form-error-alert" class="alert-box alert-error" style="display: none;"></div>
+
+      <form id="workout-form" class="fitness-form" novalidate>
+        <!-- Section 1: Personal Info -->
+        <div class="form-card">
+          <div class="card-title-row">
+            <span class="card-step-badge">1</span>
+            <div>
+              <h2 class="card-heading">Personal Information</h2>
+              <p class="card-subheading">Your baseline physiological attributes</p>
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="input-group">
+              <label for="name" class="input-label">Full Name <span class="required">*</span></label>
+              <input type="text" id="name" name="name" class="input-field" placeholder="e.g. Kavin" required maxlength="100">
+              <span class="field-error" id="name-error"></span>
+            </div>
+
+            <div class="input-group">
+              <label for="age" class="input-label">Age (years) <span class="required">*</span></label>
+              <input type="number" id="age" name="age" class="input-field" placeholder="e.g. 20" required min="12" max="100">
+              <span class="field-error" id="age-error"></span>
+            </div>
+
+            <div class="input-group">
+              <label for="weight" class="input-label">Weight (kg) <span class="required">*</span></label>
+              <input type="number" step="0.5" id="weight" name="weight" class="input-field" placeholder="e.g. 65" required min="20" max="400">
+              <span class="field-error" id="weight-error"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Goal Selection -->
+        <div class="form-card">
+          <div class="card-title-row">
+            <span class="card-step-badge">2</span>
+            <div>
+              <h2 class="card-heading">Select Fitness Goal <span class="required">*</span></h2>
+              <p class="card-subheading">Choose your primary physical target</p>
+            </div>
+          </div>
+
+          <div class="radio-cards-grid">
+            <label class="radio-card">
+              <input type="radio" name="goal" value="Weight Loss" class="radio-input">
+              <div class="radio-card-content">
+                <span class="radio-icon">🔥</span>
+                <span class="radio-title">Weight Loss</span>
+                <span class="radio-desc">Caloric deficit, metabolic circuits, and fat oxidation</span>
+              </div>
+            </label>
+
+            <label class="radio-card">
+              <input type="radio" name="goal" value="Muscle Gain" class="radio-input" checked>
+              <div class="radio-card-content">
+                <span class="radio-icon">💪</span>
+                <span class="radio-title">Muscle Gain</span>
+                <span class="radio-desc">Progressive hypertrophy, strength, and protein fueling</span>
+              </div>
+            </label>
+
+            <label class="radio-card">
+              <input type="radio" name="goal" value="General Wellness" class="radio-input">
+              <div class="radio-card-content">
+                <span class="radio-icon">🌿</span>
+                <span class="radio-title">General Wellness</span>
+                <span class="radio-desc">Functional mobility, longevity, stamina, and cardiovascular health</span>
+              </div>
+            </label>
+          </div>
+          <span class="field-error" id="goal-error"></span>
+        </div>
+
+        <!-- Section 3: Workout Intensity -->
+        <div class="form-card">
+          <div class="card-title-row">
+            <span class="card-step-badge">3</span>
+            <div>
+              <h2 class="card-heading">Workout Intensity <span class="required">*</span></h2>
+              <p class="card-subheading">Pacing and exertion level</p>
+            </div>
+          </div>
+
+          <div class="intensity-cards-grid">
+            <label class="radio-card">
+              <input type="radio" name="intensity" value="Low" class="radio-input">
+              <div class="radio-card-content">
+                <span class="radio-badge intensity-low">Gentle</span>
+                <span class="radio-title">Low Intensity</span>
+                <span class="radio-desc">Gentle pacing, generous rest intervals, ideal for recovery or beginners</span>
+              </div>
+            </label>
+
+            <label class="radio-card">
+              <input type="radio" name="intensity" value="Medium" class="radio-input" checked>
+              <div class="radio-card-content">
+                <span class="radio-badge intensity-medium">Balanced</span>
+                <span class="radio-title">Medium Intensity</span>
+                <span class="radio-desc">Standard training volume, 60-90s rest, consistent progress</span>
+              </div>
+            </label>
+
+            <label class="radio-card">
+              <input type="radio" name="intensity" value="High" class="radio-input">
+              <div class="radio-card-content">
+                <span class="radio-badge intensity-high">Challenging</span>
+                <span class="radio-title">High Intensity</span>
+                <span class="radio-desc">Demanding volume, supersets, metabolic conditioning</span>
+              </div>
+            </label>
+          </div>
+          <span class="field-error" id="intensity-error"></span>
+        </div>
+
+        <!-- Section 4: Preferences & Experience -->
+        <div class="form-card">
+          <div class="card-title-row">
+            <span class="card-step-badge">4</span>
+            <div>
+              <h2 class="card-heading">Experience & Equipment</h2>
+              <p class="card-subheading">Fine-tune the exercise selection</p>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="input-group">
+              <label for="experience" class="input-label">Fitness Experience</label>
+              <select id="experience" name="experience" class="input-field select-field">
+                <option value="Beginner" selected>Beginner (0 - 6 months)</option>
+                <option value="Intermediate">Intermediate (6 months - 2 years)</option>
+                <option value="Advanced">Advanced (2+ years)</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="preferences" class="input-label">Workout Environment / Equipment</label>
+              <select id="preferences" name="preferences" class="input-field select-field">
+                <option value="Home workout" selected>Home Workout (Bodyweight & Minimal)</option>
+                <option value="Home Gym with Dumbbells">Home Gym with Dumbbells / Bands</option>
+                <option value="Full Commercial Gym">Full Commercial Gym (Barbells & Machines)</option>
+                <option value="Outdoor Calisthenics">Outdoor Calisthenics</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button & Loader -->
+        <div class="form-actions">
+          <button type="submit" id="btn-submit-plan" class="btn btn-primary btn-submit">
+            <span class="btn-text">Generate My 7-Day Plan</span>
+            <span class="btn-spinner" style="display: none;">
+              <span class="spinner-circle"></span> Generating with Gemini AI...
+            </span>
+          </button>
+          <p class="submit-note">Takes ~2-4 seconds. Results are securely saved to your local SQLite database.</p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
